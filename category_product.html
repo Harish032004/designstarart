@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Storefront</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2 family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #ffffff; color: #333333; }
+        
+        .category-header-banner {
+            background-color: #b9cfc1;
+            padding: 24px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .header-title-container { display: inline-flex; align-items: center; justify-content: center; gap: 16px; }
+        .back-arrow-btn { text-decoration: none; color: #1e1e2d; font-size: 28px; font-weight: 400; }
+        .category-main-heading { font-size: 32px; font-weight: 700; color: #1e1e2d; }
+
+        .storefront-container { max-width: 1240px; margin: 40px auto; padding: 0 20px; display: flex; gap: 40px; }
+        .storefront-sidebar { width: 260px; flex-shrink: 0; }
+        .filter-group { margin-bottom: 36px; }
+        .filter-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; color: #1e1e2d; margin-bottom: 18px; }
+        
+        .price-range-wrapper { margin-bottom: 14px; }
+        .range-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: #b9cfc1; outline: none; }
+        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #96d1c4; cursor: pointer; }
+        .price-text-indicator { font-size: 14px; color: #64748b; margin-bottom: 16px; }
+        .price-text-indicator span { font-weight: 700; color: #1e1e2d; }
+        
+        .filter-submit-btn { background-color: #1e1e2d; border: none; color: #ffffff; padding: 8px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
+        .status-checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #475569; margin-bottom: 12px; cursor: pointer; }
+
+        .storefront-content { flex-grow: 1; }
+        .content-top-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #64748b; }
+        .breadcrumbs-path a { text-decoration: none; color: #94a3b8; }
+        .toolbar-right-controls { display: flex; align-items: center; gap: 24px; }
+        .sorting-dropdown { border: none; border-bottom: 1px solid #e2e8f0; padding: 4px 8px; font-size: 14px; color: #1e1e2d; font-weight: 500; outline: none; cursor: pointer; }
+
+        .products-showcase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .product-item-card { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
+        .product-image-container-box { width: 100%; aspect-ratio: 1 / 1; background: radial-gradient(circle, #ffffff 40%, #e8e8df 100%); border-radius: 8px; padding: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 16px; }
+        .product-image-container-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .item-title-heading { font-size: 16px; font-weight: 600; color: #1e1e2d; margin-bottom: 4px; }
+        .item-category-sub { font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
+        .item-pricing-row { font-size: 14px; margin-bottom: 16px; display: flex; gap: 8px; }
+        .item-price-regular { text-decoration: line-through; color: #94a3b8; }
+        .item-price-sale { color: #c25123; font-weight: 700; }
+        .add-cart-outline-btn { background-color: #ffffff; border: 1px solid #1e1e2d; color: #1e1e2d; padding: 8px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
+        .add-cart-outline-btn:hover { background-color: #1e1e2d; color: #ffffff; }
+
+        @media (max-width: 1024px) { .storefront-container { flex-direction: column; } .storefront-sidebar { width: 100%; } .products-showcase-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --bg-topbar: #b9cfc1;      /* Exact Sage Green */
+            --text-dark: #1e1e2d;      /* Deep Navy/Black */
+            --text-active: #96d1c4;    /* Mint Active State */
+            --border-light: #e2e8f0;
+            --navbar-height: 80px;
+        }
+
+        body {
+            background-color: #f8fafc;
+            min-height: 200vh; /* For testing sticky scroll */
+        }
+
+        /* --- Sticky Navigation Parent --- */
+        .header-holder {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        /* --- Top Bar (Seamless Single Loop Marquee) --- */
+        .top-bar {
+            background-color: var(--bg-topbar);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0;
+            overflow: hidden;
+            display: flex;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            padding-left: 100%;
+            animation: single-scroll 15s linear infinite;
+        }
+
+        @keyframes single-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* --- Main Navbar Base Layout --- */
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: var(--navbar-height);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        /* Logo Configuration */
+        .logo-container a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Desktop Navigation Links */
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-links > li {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: static;
+        }
+
+        .nav-links > li > a {
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .nav-links > li > a.active {
+            color: var(--text-active);
+        }
+
+        /* Chevron Icon Utilities */
+        .arrow-down {
+            border: solid var(--text-dark);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 2.5px;
+            transform: rotate(45deg);
+            margin-bottom: 3px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links > li:hover .arrow-down {
+            transform: rotate(-135deg);
+            margin-bottom: -3px;
+        }
+
+        /* --- Premium Full-Width Desktop Mega Menu --- */
+        .mega-menu {
+            position: absolute;
+            top: var(--navbar-height);
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-bottom: 1px solid var(--border-light);
+            padding: 40px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            z-index: 999;
+        }
+
+        .nav-links > li:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mega-menu-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .mega-menu-column h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .mega-menu-column ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mega-menu-column ul li a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease, padding-left 0.2s ease;
+            display: inline-block;
+        }
+
+        .mega-menu-column ul li a:hover {
+            color: var(--text-active);
+            padding-left: 4px;
+        }
+
+        /* Right Utilities Config */
+        .nav-utils {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-reg-btn {
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .icon-badge-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .icon-badge-wrapper:hover {
+            background-color: #f8fafc;
+        }
+
+        .icon-badge-wrapper svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--text-dark);
+            stroke-width: 1.8;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ffffff;
+            color: var(--text-active);
+            border: 1px solid var(--border-light);
+            font-size: 11px;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hamburger Trigger Button Wrapper */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 2000; /* Placed above sidebar overlay layer */
+            padding: 8px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background-color: var(--text-dark);
+            border-radius: 2px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+
+        /* --- Morphing Hamburger into an Explicit 'X' Icon --- */
+        .hamburger-btn.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-btn.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* --- Right-to-Left 3/4 Width Mobile Sidebar Panel --- */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -75vw; /* Initially hidden completely off-screen to the right */
+            width: 75vw;  /* Strictly occupies exactly 3/4th horizontal view space */
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.08);
+            z-index: 1005;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            overflow-y: auto;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-sidebar.active {
+            right: 0; /* Slides in fluidly from right-to-left position */
+        }
+
+        /* Mobile Sidebar Branding Section */
+        .mobile-logo-wrap {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .mobile-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mobile-links a {
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: block;
+        }
+
+        .mobile-links .mobile-dropdown-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Mobile Nested Link Tree Drawers */
+        .mobile-sub-menu {
+            list-style: none;
+            padding-left: 16px;
+            margin-top: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            border-left: 2px solid var(--border-light);
+        }
+
+        .mobile-sub-menu.open {
+            display: flex;
+        }
+
+        .mobile-sub-menu li a {
+            font-size: 15px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .mobile-utils {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Responsive Viewport Breakpoints --- */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0 20px; }
+            .nav-links { gap: 20px; }
+            .mega-menu-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            /* 1. Hide Top Announcement Marquee on Mobile */
+            .top-bar {
+                display: none !important;
+            }
+
+            /* 2. Hide Desktop Navigation links and utilities */
+            .nav-links, .login-reg-btn, .search-btn {
+                display: none;
+            }
+
+            /* 3. Explicitly Hide Cart and Wishlist Icons on Mobile Viewport */
+            .icon-badge-wrapper {
+                display: none !important;
+            }
+
+            /* 4. Make Hamburger Menu Visible */
+            .hamburger-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-holder">
+        
+        <div class="top-bar">
+            <span class="marquee-track">10th year Anniversary Celebration</span>
+        </div>
+
+        <header class="navbar">
+            <div class="logo-container">
+                <a href="#">
+                    <img src="logo_placeholder.png" alt="DesignStar Art Logo" class="logo-img">
+                </a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About us</a></li>
+                <li>
+                    <a href="products.html">Products <i class="arrow-down"></i></a>
+
+                    <div class="mega-menu">
+                        <div class="mega-menu-grid">
+                            <div class="mega-menu-column">
+                                <h4>Wall Decor</h4>
+                                <ul>
+                                    <li><a href="#">3D Murals</a></li>
+                                    <li><a href="category_product.html?id=3">Wall Hangings</a></li>
+                                    <li><a href="category_product.html?id=2">Paintings</a></li>
+                                    <li><a href="category_product.html?id=8">Wall Mirrors</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Sculptures & Art</h4>
+                                <ul>
+                                    <li><a href="#">Indian Icons</a></li>
+                                    <li><a href="#">Sculptures</a></li>
+                                    <li><a href="#">Table Sculptures</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Modern Interior</h4>
+                                <ul>
+                                    <li><a href="#">Tea Table Decors</a></li>
+                                    <li><a href="#">Light Arts</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Outdoor & Water Features</h4>
+                                <ul>
+                                    <li><a href="#">Water Falls</a></li>
+                                    <li><a href="#">Exterior Pots</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+
+            <div class="nav-utils">
+                <button class="search-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+
+                <a href="#" class="login-reg-btn">Login / Register</a>
+
+                <div class="icon-badge-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="badge-count">0</span>
+                </div>
+
+                <div class="icon-badge-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span class="badge-count">0</span>
+                </div>
+
+                <button class="hamburger-btn" id="menuToggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar-backdrop" id="menuBackdrop"></div>
+    <div class="mobile-sidebar" id="mobileMenu">
+        <div class="mobile-logo-wrap">
+            <img src="logo_placeholder.png" alt="DesignStar Art Logo" class="logo-img">
+        </div>
+
+        <ul class="mobile-links">
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li>
+                <a href="#" class="mobile-dropdown-toggle" id="mobileDropdownBtn">
+                    Products <i class="arrow-down"></i>
+                </a>
+                <ul class="mobile-sub-menu" id="mobileSubMenu">
+                    <li><a href="#">Indian Icons</a></li>
+                    <li><a href="#">3D Murals</a></li>
+                    <li><a href="#">Wall Hangings</a></li>
+                    <li><a href="#">Paintings</a></li>
+                    <li><a href="#">Sculptures</a></li>
+                    <li><a href="#">Table Sculptures</a></li>
+                    <li><a href="#">Tea Table Decors</a></li>
+                    <li><a href="#">Light Arts</a></li>
+                    <li><a href="#">Wall Mirrors</a></li>
+                    <li><a href="#">Water Falls</a></li>
+                    <li><a href="#">Exterior Pots</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+
+        <div class="mobile-utils">
+            <a href="#" class="login-reg-btn" style="display: block;">Login / Register</a>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        const mobileDropdownBtn = document.getElementById('mobileDropdownBtn');
+        const mobileSubMenu = document.getElementById('mobileSubMenu');
+
+        // Toggle Open/Close states for Sidebar Drawer Panels & Morph Trigger
+        function toggleSidebar() {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuBackdrop.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        menuBackdrop.addEventListener('click', toggleSidebar);
+
+        // Mobile Nested Accordion Dropdown Toggles
+        mobileDropdownBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            mobileSubMenu.classList.toggle('open');
+            
+            // Rotate chevron on interaction
+            const arrow = mobileDropdownBtn.querySelector('.arrow-down');
+            if(mobileSubMenu.classList.contains('open')) {
+                arrow.style.transform = 'rotate(-135deg)';
+                arrow.style.marginBottom = '-3px';
+            } else {
+                arrow.style.transform = 'rotate(45deg)';
+                arrow.style.marginBottom = '3px';
+            }
+        });
+    </script>
+
+    <div class="category-header-banner">
+        <div class="header-title-container">
+            <a href="index.html" class="back-arrow-btn">←</a>
+            <h1 class="category-main-heading" id="categoryTitleHeader">Loading...</h1>
+        </div>
+    </div>
+
+    <div class="storefront-container">
+        <aside class="storefront-sidebar">
+            <div class="filter-group">
+                <h4 class="filter-title">Filter by price</h4>
+                <div class="price-range-wrapper">
+                    <input type="range" class="range-slider" id="priceSlider" min="2000" max="50000" value="50000">
+                </div>
+                <div class="price-text-indicator">
+                    Price: <span>₹0</span> — <span id="maxPriceLabel">₹50,000</span>
+                </div>
+                <button class="filter-submit-btn" id="filterSubmitBtn">Filter</button>
+            </div>
+
+            <div class="filter-group">
+                <h4 class="filter-title">Stock Status</h4>
+                <label class="status-checkbox-label"><input type="checkbox" id="chkOnSale"> On sale</label>
+                <label class="status-checkbox-label"><input type="checkbox" id="chkInStock" checked> In stock</label>
+            </div>
+        </aside>
+
+        <main class="storefront-content">
+            <div class="content-top-toolbar">
+                <div class="breadcrumbs-path"><a href="index.html">Home</a> / <span id="breadcrumbCurrent">...</span></div>
+                <div class="toolbar-right-controls">
+                    <select class="sorting-dropdown" id="sortSelect">
+                        <option value="default">Default sorting</option>
+                        <option value="lowToHigh">Price: Low to High</option>
+                        <option value="highToLow">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-showcase-grid" id="productsTargetContainer"></div>
+        </main>
+    </div>
+
+    <script src="categories.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const targetGrid = document.getElementById("productsTargetContainer");
+            const priceSlider = document.getElementById("priceSlider");
+            const maxPriceLabel = document.getElementById("maxPriceLabel");
+            const sortSelect = document.getElementById("sortSelect");
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = parseInt(urlParams.get('id'));
+            const categoryName = decodeURIComponent(urlParams.get('name') || "Collection");
+
+            document.getElementById("categoryTitleHeader").textContent = categoryName;
+            document.getElementById("breadcrumbCurrent").textContent = categoryName;
+
+            priceSlider.addEventListener("input", (e) => {
+                maxPriceLabel.textContent = "₹" + parseInt(e.target.value).toLocaleString('en-IN');
+            });
+
+            function render() {
+                targetGrid.innerHTML = "";
+                if (typeof productsData === 'undefined') return;
+
+                let workingPool = productsData.filter(p => p.categoryId === categoryId);
+
+                // Sidebar Price Filtering Implementation
+                workingPool = workingPool.filter(p => p.salePrice <= parseInt(priceSlider.value));
+
+                // Stock Filter Handling
+                if(document.getElementById("chkOnSale").checked) workingPool = workingPool.filter(p => p.onSale);
+                if(document.getElementById("chkInStock").checked) workingPool = workingPool.filter(p => p.inStock);
+
+                // Sorting Operations Dropdown Pipeline
+                if (sortSelect.value === "lowToHigh") {
+                    workingPool.sort((a, b) => a.salePrice - b.salePrice);
+                } else if (sortSelect.value === "highToLow") {
+                    workingPool.sort((a, b) => b.salePrice - a.salePrice);
+                }
+
+                if(workingPool.length === 0) {
+                    targetGrid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>No matching results.</p>";
+                    return;
+                }
+
+                workingPool.forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "product-item-card";
+                    card.innerHTML = `
+                        <div class="product-image-container-box" onclick="window.location.href='product_detail.html?productId=${item.id}'">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <h3 class="item-title-heading" onclick="window.location.href='product_detail.html?productId=${item.id}'">${item.name}</h3>
+                        <div class="item-category-sub">${categoryName}</div>
+                        <div class="item-pricing-row">
+                            <span class="item-price-regular">₹${item.regularPrice.toLocaleString('en-IN')}.00</span>
+                            <span class="item-price-sale">₹${item.salePrice.toLocaleString('en-IN')}.00</span>
+                        </div>
+                        <button class="add-cart-outline-btn">Add to Cart</button>
+                    `;
+                    targetGrid.appendChild(card);
+                });
+            }
+
+            document.getElementById("filterSubmitBtn").addEventListener("click", render);
+            sortSelect.addEventListener("change", render);
+            render();
+        });
+    </script>
+
+<footer class="main-site-footer">
+    <div class="footer-max-bound">
+        
+        <div class="footer-grid-layout">
+            
+            <div class="footer-brand-column">
+                <div class="brand-artwork-wrap">
+                    <svg viewBox="0 0 200 220" class="brand-crest-svg">
+                        <rect x="25" y="25" width="150" height="170" rx="12" fill="none" stroke="#111439" stroke-width="6"/>
+                        <path d="M 15 205 C 50 185, 150 185, 185 205 C 195 210, 5 210, 15 205" fill="#111439" stroke="#111439" stroke-width="4" stroke-linejoin="round"/>
+                        <circle cx="20" cy="195" r="8" fill="#111439"/>
+                        <circle cx="180" cy="195" r="8" fill="#111439"/>
+                        <polygon points="100,50 105,65 120,65 108,75 112,90 100,80 88,90 92,75 80,65 95,65" fill="none" stroke="#111439" stroke-width="3"/>
+                        <path d="M 100 95 L 100 135 M 100 110 L 85 125 M 100 110 L 115 125 M 100 135 L 88 165 M 100 135 L 112 165" stroke="#111439" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="footer-links-column large-span">
+                <h3 class="footer-column-heading">Our Products</h3>
+                <div class="split-links-wrapper">
+                    <ul class="footer-links-list">
+                        <li><a href="#">Indian Icons</a></li>
+                        <li><a href="#">3D Murals</a></li>
+                        <li><a href="#">Wall Hangings</a></li>
+                        <li><a href="#">Paintings</a></li>
+                        <li><a href="#">Sculptures</a></li>
+                        <li><a href="#">Table Sculptures</a></li>
+                    </ul>
+                    <ul class="footer-links-list">
+                        <li><a href="#">Tea Table Decors</a></li>
+                        <li><a href="#">Light Arts</a></li>
+                        <li><a href="#">Wall Mirrors</a></li>
+                        <li><a href="#">Water Falls</a></li>
+                        <li><a href="#">Exterior Pots</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-links-column">
+                <h3 class="footer-column-heading">Quick Links</h3>
+                <ul class="footer-links-list">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">DC FAQS</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Return Refund Policy</a></li>
+                    <li><a href="#">Terms and Condition</a></li>
+                    <li><a href="#">Shipping and Delivery</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-column contact-column">
+                <h3 class="footer-column-heading">Get in Touch</h3>
+                <ul class="footer-contact-matrix">
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                        </span>
+                        <span class="contact-text-node">
+                            7, Kamarajar St,<br>Parameshwaran Nagar,<br>Sholinganallur, Chennai, Tamil Nadu 600 119.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </span>
+                        <a href="mailto:support@designstarart.com" class="contact-text-node link">support@designstarart.com</a>
+                    </li>
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </span>
+                        <a href="tel:+918870048944" class="contact-text-node link">+918870048944</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="footer-divider-line">
+
+        <div class="footer-bottom-bar">
+            <p class="copyright-disclaimer-text">© 2025 Design Star Art | All rights reserved.</p>
+            
+            <button class="scroll-top-anchor-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+        </div>
+
+    </div>
+</footer>
+
+<style>
+    .main-site-footer {
+        background-color: #65a19e; /* Exact sample palette teal shade matches uploaded graphic background tone */
+        padding: 70px 0 30px;
+        color: #ffffff;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .footer-max-bound {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .footer-grid-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 2fr 1.2fr 1.5fr; /* Optimal responsive alignment mapping rules specs */
+        gap: 40px;
+        align-items: flex-start;
+        margin-bottom: 50px;
+    }
+
+    /* Branding Crest Setup */
+    .footer-brand-column {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .brand-artwork-wrap {
+        width: 130px;
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .brand-crest-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Core Link Column Lists Typographic Scaling */
+    .footer-column-heading {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 24px;
+        letter-spacing: -0.2px;
+    }
+
+    .footer-links-column.large-span {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .split-links-wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .footer-links-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .footer-links-list a {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+        font-weight: 500;
+        transition: color 0.2s ease;
+        display: inline-block;
+    }
+
+    .footer-links-list a:hover {
+        color: #111439; /* Deep navy text hover color overlay */
+    }
+
+    /* Contact Details List Elements Layout Matrix */
+    .footer-contact-matrix {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .footer-contact-matrix li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .contact-icon-box {
+        width: 18px;
+        height: 18px;
+        color: #ffffff;
+        flex-shrink: 0;
+        margin-top: 3px;
+    }
+
+    .contact-icon-box svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .contact-text-node {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    .contact-text-node.link {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .contact-text-node.link:hover {
+        color: #111439;
+    }
+
+    /* Sub-section Dividers and Copyright Structures */
+    .footer-divider-line {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 24px;
+    }
+
+    .footer-bottom-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding-top: 6px;
+    }
+
+    .copyright-disclaimer-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
+
+    /* Scroll Top Float Anchor Handle Button Layout */
+    .scroll-top-anchor-btn {
+        position: absolute;
+        right: 0;
+        background-color: #ffffff;
+        color: #65a19e;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .scroll-top-anchor-btn:hover {
+        transform: translateY(-2px);
+        background-color: #f1f5f9;
+    }
+
+    .scroll-top-anchor-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* --- Responsive System Viewport Breakdown Adjustments --- */
+    @media (max-width: 1024px) {
+        .footer-grid-layout {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .footer-grid-layout {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .split-links-wrapper {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        .main-site-footer {
+            padding: 50px 0 20px;
+        }
+        .footer-bottom-bar {
+            flex-direction: column;
+            gap: 20px;
+        }
+        .scroll-top-anchor-btn {
+            position: relative;
+            right: auto;
+        }
+    }
+</style>
+<div class="floating-sticky-sidebar">
+    
+    <a href="https://wa.me/918870048944" target="_blank" class="sticky-action-item whatsapp-slice">
+        <span class="action-slide-label">WhatsApp</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.49-3.23a9.882 9.882 0 0 0 5.514 1.66h.005c5.441 0 9.864-4.42 9.868-9.864a9.785 9.785 0 0 0-2.88-6.953 9.78 9.78 0 0 0-6.947-2.88c-5.45 0-9.873 4.423-9.877 9.867a9.85 9.85 0 0 0 1.52 5.176l-.992 3.616 3.704-.97zM17.34 15.61c-.3-.15-1.782-.88-2.062-.982-.28-.1-.485-.15-.69.15-.204.3-.793.982-.972 1.185-.18.2-.36.225-.66.075a8.318 8.318 0 0 1-2.45-1.513 9.176 9.176 0 0 1-1.696-2.112c-.18-.3-.02-.462.13-.61.137-.135.3-.35.45-.525.15-.175.2-.3.3-.5s.05-.375-.025-.525C9.7 10.375 9.1 8.9 8.855 8.31c-.24-.58-.485-.5-.66-.51a4.98 4.98 0 0 0-.47-.01c-.165 0-.435.06-.66.31a3.06 3.06 0 0 0-1.02 2.28c0 1.43 1.04 2.81 1.185 3a22.58 22.58 0 0 0 4.65 4.11c1.23.53 2.19.43 3.01.3 1.01-.15 1.78-.73 2.03-1.38s.05-1.2.02-1.325c-.03-.12-.15-.175-.45-.325z"/>
+            </svg>
+        </div>
+    </a>
+
+    <a href="tel:+918870048944" class="sticky-action-item voice-slice">
+        <span class="action-slide-label">Call us</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                <path d="M14.05 2a9 9 0 0 1 7.95 7.95M14.05 6a5 5 0 0 1 3.95 3.95"/>
+            </svg>
+        </div>
+    </a>
+
+    <a href="https://instagram.com" target="_blank" class="sticky-action-item instagram-slice">
+        <span class="action-slide-label">Instagram</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+        </div>
+    </a>
+
+</div>
+
+<style>
+    /* --- Main Parent Container Node --- */
+    .floating-sticky-sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        z-index: 999999;
+        background: transparent;
+        gap: 3px; /* Premium crisp split gap lines */
+    }
+
+    /* --- Core Slide Component Structure --- */
+    .sticky-action-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Aligns text neatly to the left margin interior flow */
+        text-decoration: none;
+        height: 60px;
+        width: 190px; /* Fixed standard full row layout length properties */
+        position: relative;
+        cursor: pointer;
+        border-radius: 8px 0 0 8px;
+        box-shadow: -2px 3px 10px rgba(0, 0, 0, 0.15);
+        
+        /* 🛠️ FIX 1: Pushes only the dynamic label matrix safely out of the frame by default */
+        transform: translateX(130px); 
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 🛠️ FIX 2: Only the specific hovered row slides into view, the rest remain static */
+    .sticky-action-item:hover {
+        transform: translateX(0);
+    }
+
+    /* --- Icon Container: STATIONARY EDGE ANCHOR --- */
+    .action-icon-holder {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        position: absolute;
+        
+        /* 🛠️ FIX 3: Locked to the absolute left edge of the 190px tray, which correlates precisely to the screen border edge */
+        left: 0; 
+        top: 0;
+        z-index: 2;
+    }
+
+    .action-icon-holder svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* SVG vectors scaling constraints configuration rules variables */
+    .whatsapp-slice .action-icon-holder svg { fill: #ffffff; stroke: none; }
+    .voice-slice .action-icon-holder svg { fill: none; stroke: #ffffff; stroke-width: 2; }
+    .instagram-slice .action-icon-holder svg { fill: none; stroke: #ffffff; stroke-width: 2; }
+
+    /* --- Text Slide Label Configuration --- */
+    .action-slide-label {
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        
+        /* 🛠️ FIX 4: Pushes the text safely right of the 60px icon block area */
+        padding-left: 75px; 
+        
+        white-space: nowrap;
+        user-select: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Dynamic Label Text Stream visibility trigger mapping */
+    .sticky-action-item:hover .action-slide-label {
+        opacity: 1;
+        transition-delay: 0.1s;
+    }
+
+    /* --- Custom Theme Branding Color Tokens --- */
+    .whatsapp-slice { background-color: #25D366; }
+    .voice-slice { background-color: #00bcd4; }
+    .instagram-slice { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+    /* --- Responsive System Adaptive Breakpoints --- */
+    @media (max-width: 768px) {
+        .sticky-action-item {
+            height: 50px;
+            width: 160px;
+            transform: translateX(110px); /* Accurate padding metrics offsets tracking for mobile */
+        }
+        .action-icon-holder {
+            width: 50px;
+            height: 50px;
+        }
+        .action-icon-holder svg { width: 22px; height: 22px; }
+        .action-slide-label { font-size: 13px; padding-left: 62px; }
+    }
+
+    @media (max-width: 480px) {
+        .sticky-action-item {
+            height: 45px;
+            width: 140px;
+            transform: translateX(95px);
+        }
+        .action-icon-holder {
+            width: 45px;
+            height: 45px;
+        }
+        .action-icon-holder svg { width: 20px; height: 20px; }
+        .action-slide-label { font-size: 12px; padding-left: 55px; }
+    }
+</style>
+</body>
+</html>

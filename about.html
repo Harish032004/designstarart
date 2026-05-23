@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Art Director</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --bg-topbar: #b9cfc1;      /* Exact Sage Green */
+            --text-dark: #1e1e2d;      /* Deep Navy/Black */
+            --text-active: #96d1c4;    /* Mint Active State */
+            --border-light: #e2e8f0;
+            --navbar-height: 80px;
+        }
+
+        body {
+            background-color: #f8fafc;
+            min-height: 200vh; /* For testing sticky scroll */
+        }
+
+        /* --- Sticky Navigation Parent --- */
+        .header-holder {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        /* --- Top Bar (Seamless Single Loop Marquee) --- */
+        .top-bar {
+            background-color: var(--bg-topbar);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0;
+            overflow: hidden;
+            display: flex;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            padding-left: 100%;
+            animation: single-scroll 15s linear infinite;
+        }
+
+        @keyframes single-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* --- Main Navbar Base Layout --- */
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: var(--navbar-height);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        /* Logo Configuration */
+        .logo-container a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Desktop Navigation Links */
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-links > li {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: static;
+        }
+
+        .nav-links > li > a {
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .nav-links > li > a.active {
+            color: var(--text-active);
+        }
+
+        /* Chevron Icon Utilities */
+        .arrow-down {
+            border: solid var(--text-dark);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 2.5px;
+            transform: rotate(45deg);
+            margin-bottom: 3px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links > li:hover .arrow-down {
+            transform: rotate(-135deg);
+            margin-bottom: -3px;
+        }
+
+        /* --- Premium Full-Width Desktop Mega Menu --- */
+        .mega-menu {
+            position: absolute;
+            top: var(--navbar-height);
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-bottom: 1px solid var(--border-light);
+            padding: 40px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            z-index: 999;
+        }
+
+        .nav-links > li:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mega-menu-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .mega-menu-column h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .mega-menu-column ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mega-menu-column ul li a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease, padding-left 0.2s ease;
+            display: inline-block;
+        }
+
+        .mega-menu-column ul li a:hover {
+            color: var(--text-active);
+            padding-left: 4px;
+        }
+
+        /* Right Utilities Config */
+        .nav-utils {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-reg-btn {
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .icon-badge-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .icon-badge-wrapper:hover {
+            background-color: #f8fafc;
+        }
+
+        .icon-badge-wrapper svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--text-dark);
+            stroke-width: 1.8;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ffffff;
+            color: var(--text-active);
+            border: 1px solid var(--border-light);
+            font-size: 11px;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hamburger Trigger Button Wrapper */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 2000; /* Placed above sidebar overlay layer */
+            padding: 8px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background-color: var(--text-dark);
+            border-radius: 2px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+
+        /* --- Morphing Hamburger into an Explicit 'X' Icon --- */
+        .hamburger-btn.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-btn.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* --- Right-to-Left 3/4 Width Mobile Sidebar Panel --- */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -75vw; /* Initially hidden completely off-screen to the right */
+            width: 75vw;  /* Strictly occupies exactly 3/4th horizontal view space */
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.08);
+            z-index: 1005;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            overflow-y: auto;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-sidebar.active {
+            right: 0; /* Slides in fluidly from right-to-left position */
+        }
+
+        /* Mobile Sidebar Branding Section */
+        .mobile-logo-wrap {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .mobile-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mobile-links a {
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: block;
+        }
+
+        .mobile-links .mobile-dropdown-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Mobile Nested Link Tree Drawers */
+        .mobile-sub-menu {
+            list-style: none;
+            padding-left: 16px;
+            margin-top: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            border-left: 2px solid var(--border-light);
+        }
+
+        .mobile-sub-menu.open {
+            display: flex;
+        }
+
+        .mobile-sub-menu li a {
+            font-size: 15px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .mobile-utils {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Responsive Viewport Breakpoints --- */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0 20px; }
+            .nav-links { gap: 20px; }
+            .mega-menu-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            /* 1. Hide Top Announcement Marquee on Mobile */
+            .top-bar {
+                display: none !important;
+            }
+
+            /* 2. Hide Desktop Navigation links and utilities */
+            .nav-links, .login-reg-btn, .search-btn {
+                display: none;
+            }
+
+            /* 3. Explicitly Hide Cart and Wishlist Icons on Mobile Viewport */
+            .icon-badge-wrapper {
+                display: none !important;
+            }
+
+            /* 4. Make Hamburger Menu Visible */
+            .hamburger-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+       <div class="header-holder">
+        
+        <div class="top-bar">
+            <span class="marquee-track">10th year Anniversary Celebration</span>
+        </div>
+
+        <header class="navbar">
+            <div class="logo-container">
+                <a href="#">
+                    <img src="logo_placeholder.png" alt="DesignStar Art Logo" class="logo-img">
+                </a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About us</a></li>
+                <li>
+                    <a href="products.html">Products <i class="arrow-down"></i></a>
+
+                    <div class="mega-menu">
+                        <div class="mega-menu-grid">
+                            <div class="mega-menu-column">
+                                <h4>Wall Decor</h4>
+                                <ul>
+                                    <li><a href="#">3D Murals</a></li>
+                                    <li><a href="category_product.html?id=3">Wall Hangings</a></li>
+                                    <li><a href="category_product.html?id=2">Paintings</a></li>
+                                    <li><a href="category_product.html?id=8">Wall Mirrors</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Sculptures & Art</h4>
+                                <ul>
+                                    <li><a href="#">Indian Icons</a></li>
+                                    <li><a href="#">Sculptures</a></li>
+                                    <li><a href="#">Table Sculptures</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Modern Interior</h4>
+                                <ul>
+                                    <li><a href="#">Tea Table Decors</a></li>
+                                    <li><a href="#">Light Arts</a></li>
+                                </ul>
+                            </div>
+                            <div class="mega-menu-column">
+                                <h4>Outdoor & Water Features</h4>
+                                <ul>
+                                    <li><a href="#">Water Falls</a></li>
+                                    <li><a href="#">Exterior Pots</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+
+            <div class="nav-utils">
+                <button class="search-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+
+                <a href="#" class="login-reg-btn">Login / Register</a>
+
+                <div class="icon-badge-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="badge-count">0</span>
+                </div>
+
+                <div class="icon-badge-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span class="badge-count">0</span>
+                </div>
+
+                <button class="hamburger-btn" id="menuToggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar-backdrop" id="menuBackdrop"></div>
+    <div class="mobile-sidebar" id="mobileMenu">
+        <div class="mobile-logo-wrap">
+            <img src="logo_placeholder.png" alt="DesignStar Art Logo" class="logo-img">
+        </div>
+
+        <ul class="mobile-links">
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li>
+                <a href="#" class="mobile-dropdown-toggle" id="mobileDropdownBtn">
+                    Products <i class="arrow-down"></i>
+                </a>
+                <ul class="mobile-sub-menu" id="mobileSubMenu">
+                    <li><a href="#">Indian Icons</a></li>
+                    <li><a href="#">3D Murals</a></li>
+                    <li><a href="#">Wall Hangings</a></li>
+                    <li><a href="#">Paintings</a></li>
+                    <li><a href="#">Sculptures</a></li>
+                    <li><a href="#">Table Sculptures</a></li>
+                    <li><a href="#">Tea Table Decors</a></li>
+                    <li><a href="#">Light Arts</a></li>
+                    <li><a href="#">Wall Mirrors</a></li>
+                    <li><a href="#">Water Falls</a></li>
+                    <li><a href="#">Exterior Pots</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+
+        <div class="mobile-utils">
+            <a href="#" class="login-reg-btn" style="display: block;">Login / Register</a>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        const mobileDropdownBtn = document.getElementById('mobileDropdownBtn');
+        const mobileSubMenu = document.getElementById('mobileSubMenu');
+
+        // Toggle Open/Close states for Sidebar Drawer Panels & Morph Trigger
+        function toggleSidebar() {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuBackdrop.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        menuBackdrop.addEventListener('click', toggleSidebar);
+
+        // Mobile Nested Accordion Dropdown Toggles
+        mobileDropdownBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            mobileSubMenu.classList.toggle('open');
+            
+            // Rotate chevron on interaction
+            const arrow = mobileDropdownBtn.querySelector('.arrow-down');
+            if(mobileSubMenu.classList.contains('open')) {
+                arrow.style.transform = 'rotate(-135deg)';
+                arrow.style.marginBottom = '-3px';
+            } else {
+                arrow.style.transform = 'rotate(45deg)';
+                arrow.style.marginBottom = '3px';
+            }
+        });
+    </script>
+
+
+
+
+<section class="about-breadcrumb-section">
+    <div class="breadcrumb-content-box">
+        <h1 class="breadcrumb-main-title">About us</h1>
+        <div class="breadcrumb-nav-links">
+            <a href="index.html">HOME</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current-node">ABOUT US</span>
+        </div>
+    </div>
+</section>
+
+<style>
+    .about-breadcrumb-section {
+        /* Exact color palette match with subtle artistic distress overlay texture simulation */
+        background-color: #b9cfc1; 
+        background-image: 
+            radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0),
+            radial-gradient(rgba(0, 0, 0, 0.02) 2px, transparent 0);
+        background-size: 8px 8px, 16px 16px;
+        background-position: 0 0, 4px 4px;
+        
+        padding: 50px 20px;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .breadcrumb-content-box {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .breadcrumb-main-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1e1e2d; /* Matching deep signature black/navy heading color */
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+    }
+
+    .breadcrumb-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .breadcrumb-nav-links a {
+        text-decoration: none;
+        color: #555555; /* Muted subtext tone */
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumb-nav-links a:hover {
+        color: #1e1e2d;
+    }
+
+    .breadcrumb-separator {
+        color: #777777;
+        font-weight: 400;
+        user-select: none;
+    }
+
+    .breadcrumb-current-node {
+        color: #1e1e2d;
+        user-select: none;
+    }
+
+    /* --- Responsive Behavior Adaptations --- */
+    @media (max-width: 768px) {
+        .about-breadcrumb-section {
+            padding: 35px 15px;
+        }
+        .breadcrumb-main-title {
+            font-size: 32px;
+        }
+    }
+</style>
+    
+<section class="about-showcase-wrapper">
+    <div class="about-inner-card">
+        
+        <div class="card-split-row">
+            <div class="card-image-panel">
+                <img src="https://designstarart.com/wp-content/uploads/2025/02/about.webp" alt="Art Director Profile Picture" class="panel-main-img">
+            </div>
+
+            <div class="card-text-panel">
+                <h2 class="panel-heading-title">Top Art Directors in Chennai | Handcrafted Artistry for Your Home</h2>
+                
+                <p class="panel-story-text">
+                    <span class="text-bold">Design Star Art</span>, we create more than just decor we craft stories in every piece, guided by the vision of some of the <span class="text-accent-coral">Top Art Directors in Chennai</span>. Say goodbye to mass-produced items and embrace the elegance of handcrafted design. Whether it's a striking wall hanging, a lifelike sculpture, or a hand-painted ceramic pot, each piece is a tribute to our artisans' dedication and skill. We use only the finest materials to bring you premium, interior decor.
+                </p>
+                <p class="panel-story-text">
+                    From majestic Indian Leader engraved wall hangings to antique-inspired mirrors with timeless appeal, our collection adds soul, sophistication, and a hint of magic to your space. Discover the art of living only at <span class="text-bold">Design Star Art</span>, where creativity meets craftsmanship. At <span class="text-bold">Design star art</span>, we don't just sell decor , we celebrate craftsmanship, creativity, and the soulful beauty of handmade art.
+                </p>
+            </div>
+        </div>
+
+        <div class="card-extended-row">
+            <p class="panel-story-text">
+                In a world flooded with factory-made, impersonal items, we stand apart by offering something truly special kind interior decor pieces that are born from the hands of skilled artisans and brought to life with passion, precision, and purpose.
+            </p>
+            <p class="panel-story-text">
+                Every item in our collection tells a story. Whether it's a <span class="text-bold">majestic wall hanging</span>, a <span class="text-bold">lifelike sculpture</span>, or a <span class="text-bold">hand-painted ceramic pot</span>, each piece is thoughtfully designed and meticulously crafted to evoke emotion and inspire wonder. These are not just decorations , they are heirloom-quality works of art that breathe character and charm into your living space.
+            </p>
+            <p class="panel-story-text">
+                Our artisans are the heart of what we do. We collaborate with master craftspeople who have spent years even decades honing their techniques. Their talents, passed down through generations, are evident in every brushstroke, engraving, and intricate detail. We believe that the human touch adds a soulfulness to decor that no machine could ever replicate.
+            </p>
+            <p class="panel-story-text">
+                To ensure exceptional quality, we source only the <span class="text-bold">finest natural materials</span> from ethically harvested wood and durable metals to rich, vibrant pigments and premium ceramics. Each material is carefully chosen to enhance the design and longevity of our products, ensuring that what you bring into your home is not only beautiful, but built to last.
+            </p>
+            <p class="panel-story-text">
+                Our curated collection features an array of artistic treasures that reflect both traditional elegance and modern sophistication. Take, for example, our <span class="text-bold">Indian Leader engraved wall hangings</span> bold, intricate, and full of cultural resonance, they command attention and tell a powerful story of heritage and leadership. These pieces are more than wall décor; they are statements of identity and strength.
+            </p>
+            <p class="panel-story-text">
+                At Design star art, we believe that home decor should be more than just visually appealing. It should <span class="text-bold">spark emotion, ignite conversation</span>, and <span class="text-bold">elevate the atmosphere</span> of any room. That's why we focus on offering pieces that combine function with artistic expression.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    /* --- Main Section White Background Canvas --- */
+    .about-showcase-wrapper {
+        background-color: #ffffff; /* Explicit pure white section background */
+        padding: 60px 24px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* --- Central Solid Color Wrapper Box Panel --- */
+    .about-inner-card {
+        background-color: #e2e8f0; /* Perfect soft grey container background */
+        max-width: 1100px;
+        width: 100%;
+        border-radius: 6px;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px; /* Gapping grid system across upper split and lower rows blocks */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    /* Top Row Layout Structuring */
+    .card-split-row {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    /* Image takes up exactly the left partition frame area */
+    .card-image-panel {
+        width: 35%;
+        flex-shrink: 0;
+    }
+
+    .panel-main-img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        border-radius: 4px;
+    }
+
+    /* Text on the right wraps cleanly matching top title boundaries */
+    .card-text-panel {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .panel-heading-title {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #1e1e2d;
+        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+    }
+
+    /* Extended Content Block Flowing Below the Image Space layout boundary metrics */
+    .card-extended-row {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* --- Universal Typography Profiles Styling --- */
+    .panel-story-text {
+        font-size: 15.5px;
+        color: #475569;
+        line-height: 1.75;
+        text-align: justify; /* Keeps editorial clean alignments */
+    }
+
+    /* Dynamic inline keyword token accent highlights classes selectors wrappers */
+    .text-bold {
+        font-weight: 700;
+        color: #1e1e2d;
+    }
+
+    .text-accent-coral {
+        font-weight: 700;
+        color: #c25123; /* Earthy design red accent color from image reference copy markers */
+    }
+
+    /* --- Responsive Breakpoints Adaptations Framework --- */
+    @media (max-width: 900px) {
+        .about-inner-card {
+            padding: 30px 20px;
+            gap: 20px;
+        }
+        
+        .card-split-row {
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .card-image-panel {
+            width: 55%; /* Elevates scale balance context inside mobile devices matrices */
+            min-width: 220px;
+        }
+
+        .panel-heading-title {
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .panel-story-text {
+            font-size: 15px;
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-image-panel {
+            width: 80%;
+        }
+        .panel-heading-title {
+            font-size: 19px;
+        }
+    }
+</style>
+<section class="brand-values-section">
+    <div class="values-container-bound">
+        <div class="values-cards-grid">
+            
+            <div class="value-tilt-card">
+                <div class="card-internal-content">
+                    <h3 class="card-title-heading">Our Mission</h3>
+                    <p class="card-description-text">
+                        Our mission is to provide our customers with high-quality, unique home decor pieces that will help them create a beautiful and inviting home. We are committed to providing excellent customer service and making sure that our customers are completely satisfied with their purchase.
+                    </p>
+                </div>
+            </div>
+
+            <div class="value-tilt-card">
+                <div class="card-internal-content">
+                    <h3 class="card-title-heading">Our Values</h3>
+                    <p class="card-description-text center-items">
+                        We believe in the following values:<br>
+                        <span class="value-bullet-point">Quality</span>
+                        <span class="value-bullet-point">Creativity</span>
+                        <span class="value-bullet-point">Innovation</span>
+                        <span class="value-bullet-point">Customer satisfaction</span>
+                        <span class="value-bullet-point">Sustainability</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="value-tilt-card">
+                <div class="card-internal-content">
+                    <h3 class="card-title-heading">Our Team</h3>
+                    <p class="card-description-text">
+                        We are a team of passionate and dedicated individuals who are committed to making Designstarart.com the best possible experience for our customers. We have a wealth of experience in the home decor industry, and we are always working to improve our products and services.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    .brand-values-section {
+        background-color: #ffffff;
+        padding: 60px 0; /* Slightly tighter section boundary padding */
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .values-container-bound {
+        max-width: 1140px; /* Reduced width profile to bring cards closer */
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    /* 3-Column Grid Layout */
+    .values-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px; /* Tighter layout boundaries padding */
+        perspective: 1000px; /* Essential for 3D axis tilting context */
+    }
+
+    /* --- Sleeker Optimized Card Canvas Base --- */
+    .value-tilt-card {
+        background-color: #65a19e; /* Signature Website Teal */
+        border-radius: 12px;       /* Sleeker, slightly tighter corner radius profile */
+        padding: 36px 24px;        /* Reduced padding to shrink overall size safely */
+        min-height: 310px;         /* Decreased card depth layout height profile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #ffffff;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        /* 3D Core Layering Rigging Configuration */
+        transform-style: preserve-3d;
+        transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+        
+        /* Smooth elastic motion timeline curves */
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+
+    /* --- True Backward 3D Tilt Multi-Axis Hover Mechanics --- */
+    .value-tilt-card:hover {
+        box-shadow: 0 14px 30px rgba(101, 161, 158, 0.2);
+    }
+
+    /* Card 1: Tilts backward and slightly to the left margin perspective angle */
+    .values-cards-grid .value-tilt-card:nth-child(1):hover {
+        transform: perspective(1000px) rotateX(-8deg) rotateY(-4deg) translateZ(-5px);
+    }
+
+    /* Card 2: Tilts backward on a straight direct horizon angle vector profile */
+    .values-cards-grid .value-tilt-card:nth-child(2):hover {
+        transform: perspective(1000px) rotateX(-10deg) rotateY(0deg) translateZ(-8px);
+    }
+
+    /* Card 3: Tilts backward and slightly to the right margin perspective angle */
+    .values-cards-grid .value-tilt-card:nth-child(3):hover {
+        transform: perspective(1000px) rotateX(-8deg) rotateY(4deg) translateZ(-5px);
+    }
+
+    /* Pushes content structural elements inside card forward to emphasize the backward depth lift */
+    .card-internal-content {
+        transform: translateZ(25px);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        width: 100%;
+    }
+
+    /* --- Typographic Elements --- */
+    .card-title-heading {
+        font-size: 22px; /* Scaled text size down slightly */
+        font-weight: 700;
+        margin-bottom: 18px;
+        letter-spacing: -0.2px;
+    }
+
+    .card-description-text {
+        font-size: 14.5px; /* Tighter layout font scale matching size update */
+        line-height: 1.65;
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 400;
+    }
+
+    .card-description-text.center-items {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .value-bullet-point {
+        display: block;
+        font-weight: 500;
+        color: #ffffff;
+    }
+
+    /* --- Responsive System Adaptation Breaks --- */
+    @media (max-width: 1024px) {
+        .values-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .value-tilt-card {
+            min-height: 290px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .values-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .brand-values-section {
+            padding: 40px 0;
+        }
+        /* Disables 3D matrix depth on touch screens to ensure uniform navigation readability */
+        .values-cards-grid .value-tilt-card:hover {
+            transform: scale(0.98) !important;
+        }
+    }
+</style>
+
+<section class="fine-works-gallery-section">
+    <h2 class="gallery-section-title">Our Fine Works</h2>
+    
+    <div class="gallery-thumbnail-grid">
+        <div class="gallery-item-card" onclick="openLightbox(0)">
+            <div class="gallery-img-container">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80" alt="Gorilla Sculpture Installation">
+            </div>
+        </div>
+        
+        <div class="gallery-item-card" onclick="openLightbox(1)">
+            <div class="gallery-img-container">
+                <img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=800&q=80" alt="Three Wise Monkeys Rock Work">
+            </div>
+        </div>
+        
+        <div class="gallery-item-card" onclick="openLightbox(2)">
+            <div class="gallery-img-container">
+                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80" alt="Luxury Dining Metallic Wall Art">
+            </div>
+        </div>
+        
+        <div class="gallery-item-card" onclick="openLightbox(3)">
+            <div class="gallery-img-container">
+                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80" alt="Earthy Toned Vertical Panels Setup">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="lightbox-modal-overlay" id="galleryLightbox">
+    <div class="lightbox-top-toolbar">
+        <div class="lightbox-asset-counter" id="lightboxCounter">1 / 4</div>
+        <div class="lightbox-control-actions">
+            <button class="toolbar-icon-btn" onclick="toggleFullscreen()" aria-label="Toggle Fullscreen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+            </button>
+            <button class="toolbar-icon-btn" onclick="toggleZoomImg()" aria-label="Zoom Image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            </button>
+            <button class="toolbar-icon-btn" aria-label="Share Asset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+            <button class="toolbar-icon-btn close-trigger" onclick="closeLightbox()" aria-label="Close Lightbox">✕</button>
+        </div>
+    </div>
+
+    <div class="lightbox-display-viewport">
+        <button class="viewport-nav-arrow left" onclick="changeSlide(-1)" id="lightboxPrev">‹</button>
+        <div class="viewport-img-frame">
+            <img src="" id="lightboxMainImage" alt="Expanded Showcase Preview">
+        </div>
+        <button class="viewport-nav-arrow right" onclick="changeSlide(1)" id="lightboxNext">›</button>
+    </div>
+
+    <div class="lightbox-bottom-caption" id="lightboxCaption">about</div>
+</div>
+
+<style>
+    /* --- Gallery Core Base Styles --- */
+    .fine-works-gallery-section {
+        max-width: 1240px;
+        margin: 60px auto;
+        padding: 0 24px;
+        text-align: center;
+    }
+
+    .gallery-section-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e1e2d;
+        margin-bottom: 36px;
+    }
+
+    /* Clean 4-Column Responsive Frame Alignment Grid Layout (Matches reference image 1) */
+    .gallery-thumbnail-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .gallery-item-card {
+        cursor: pointer;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #f1f5f9;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .gallery-item-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .gallery-img-container {
+        width: 100%;
+        aspect-ratio: 1.45 / 1; /* Retains exact snapshot panoramic landscape aspect boundaries layout */
+        overflow: hidden;
+    }
+
+    .gallery-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    .gallery-item-card:hover .gallery-img-container img {
+        transform: scale(1.03);
+    }
+
+    /* --- Lightbox Structural Overlay Layout System (Matches reference image 2) --- */
+    .lightbox-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(30, 30, 30, 0.96); /* Smooth dark ambient background masking */
+        z-index: 99999; /* Higher layer index to mount clean on top of sticky navs */
+        display: none; /* Initially active states toggled via javascript classes attributes entries */
+        flex-direction: column;
+        justify-content: space-between;
+        user-select: none;
+    }
+
+    /* Top Action Header Toolbar Layout settings */
+    .lightbox-top-toolbar {
+        width: 100%;
+        height: 60px;
+        background-color: rgba(17, 17, 17, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+    }
+
+    .lightbox-asset-counter {
+        font-size: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: 0.5px;
+    }
+
+    .lightbox-control-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .toolbar-icon-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .toolbar-icon-btn:hover {
+        color: #ffffff;
+    }
+
+    .toolbar-icon-btn.close-trigger {
+        font-size: 22px;
+        font-weight: 300;
+    }
+
+    .toolbar-icon-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Central Display Windows Viewports Layout Box */
+    .lightbox-display-viewport {
+        flex-grow: 1;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        position: relative;
+    }
+
+    .viewport-img-frame {
+        max-width: 82%;
+        max-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 4px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    }
+
+    .viewport-img-frame img {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Magnified scaling state tracking toggle hook selector */
+    .viewport-img-frame img.zoomed-state {
+        transform: scale(1.4);
+        cursor: zoom-out;
+    }
+
+    /* Horizontal Chevron Arrow Handle buttons */
+    .viewport-nav-arrow {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 54px;
+        font-weight: 200;
+        cursor: pointer;
+        padding: 20px;
+        transition: color 0.2s, transform 0.2s;
+        z-index: 10;
+    }
+
+    .viewport-nav-arrow:hover {
+        color: #ffffff;
+        transform: scale(1.1);
+    }
+
+    /* Bottom Caption Indicator Text layout */
+    .lightbox-bottom-caption {
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        font-weight: 500;
+        padding-top: 10px;
+        background-color: rgba(17, 17, 17, 0.2);
+        letter-spacing: 0.3px;
+    }
+
+    /* --- Responsive System Adaptation Breaks --- */
+    @media (max-width: 1024px) {
+        .gallery-thumbnail-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+    @media (max-width: 600px) {
+        .gallery-thumbnail-grid { grid-template-columns: 1fr; gap: 16px; }
+        .viewport-nav-arrow { font-size: 38px; padding: 10px; }
+        .lightbox-display-viewport { padding: 0 10px; }
+    }
+</style>
+
+<script>
+    // Asset matrix storage pool tracking array details pointers links
+    let galleryImagesPool = [];
+    let activeSlideIndex = 0;
+    let isZoomed = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Collect asset addresses dynamically out from active DOM thumbnail grid elements layout nodes setup
+        const imgElements = document.querySelectorAll(".gallery-img-container img");
+        galleryImagesPool = Array.from(imgElements).map(img => img.src);
+    });
+
+    function openLightbox(targetIndex) {
+        const lightbox = document.getElementById("galleryLightbox");
+        activeSlideIndex = targetIndex;
+        isZoomed = false;
+        
+        document.getElementById("lightboxMainImage").classList.remove("zoomed-state");
+        syncLightboxState();
+        
+        lightbox.style.display = "flex";
+        document.body.style.overflow = "hidden"; // Locks master scrollbar safely when viewport lightbox modal mounts
+    }
+
+    function closeLightbox() {
+        document.getElementById("galleryLightbox").style.display = "none";
+        document.body.style.overflow = "auto"; // Restores viewport scrolling mechanics
+    }
+
+    function changeSlide(directionOffset) {
+        activeSlideIndex += directionOffset;
+        
+        // Loop bound boundary check thresholds redirects seamlessly arrays scopes edge loops
+        if (activeSlideIndex >= galleryImagesPool.length) activeSlideIndex = 0;
+        if (activeSlideIndex < 0) activeSlideIndex = galleryImagesPool.length - 1;
+        
+        isZoomed = false;
+        document.getElementById("lightboxMainImage").classList.remove("zoomed-state");
+        syncLightboxState();
+    }
+
+    function syncLightboxState() {
+        const mainImg = document.getElementById("lightboxMainImage");
+        mainImg.src = galleryImagesPool[activeSlideIndex];
+        
+        // Update Counter Display nodes (e.g., "2 / 4")
+        document.getElementById("lightboxCounter").textContent = `${activeSlideIndex + 1} / ${galleryImagesPool.length}`;
+        
+        // Update bottom contextual asset descriptors text maps matching index pointers
+        document.getElementById("lightboxCaption").textContent = `about ${activeSlideIndex + 1}`;
+    }
+
+    function toggleZoomImg() {
+        const mainImg = document.getElementById("lightboxMainImage");
+        isZoomed = !isZoomed;
+        mainImg.classList.toggle("zoomed-state", isZoomed);
+    }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    // Keyboard Hotkey Nav Controls Interceptor
+    document.addEventListener("keydown", (e) => {
+        const lightbox = document.getElementById("galleryLightbox");
+        if (lightbox.style.display === "flex") {
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowRight") changeSlide(1);
+            if (e.key === "ArrowLeft") changeSlide(-1);
+        }
+    });
+</script>
+
+<section class="clients-logo-section">
+    <h2 class="clients-section-title">Our Clients</h2>
+    
+    <div class="clients-logos-grid">
+        
+        <div class="client-logo-card">
+            <img src="logo_laksola.png" alt="Laksola Bangalore Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">LAKSOLA</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_lh.png" alt="Brand Logo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">LH BRAND</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_toyota.png" alt="Toyota Lanson Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">TOYOTA LANSON</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_casagrand.png" alt="Casagrand Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">CASAGRAND</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_dayshotel.png" alt="Days Hotel Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">DAYS HOTEL</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_sungroup.png" alt="Sun Group Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">SUN GROUP</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_lemeridien.png" alt="Le Meridien Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">LE MERIDIEN</span>
+        </div>
+
+        <div class="client-logo-card">
+            <img src="logo_avm.png" alt="AVM Studios Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">AVM STUDIOS</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_tafe.png" alt="TAFE Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">TAFE</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_crest1.png" alt="Brand Logo 10" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">COLLEGE EMBLEM</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_crest2.png" alt="Brand Logo 11" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">ROYAL EMBLEM</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_chettinad.png" alt="Chettinad Group Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">CHETTINAD</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_jeeresort.png" alt="JEE Resort Tiruppur Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">JEE RESORT</span>
+        </div>
+        
+        <div class="client-logo-card">
+            <img src="logo_phoenix.png" alt="Phoenix Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="logo-fallback-text" style="display:none;">PRO PHOENIX</span>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    .clients-logo-section {
+        max-width: 1240px;
+        margin: 60px auto;
+        padding: 0 24px;
+        text-align: center;
+        background-color: #ffffff;
+    }
+
+    .clients-section-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1e1e2d;
+        margin-bottom: 45px;
+        letter-spacing: -0.2px;
+    }
+
+    /* Standard 7-column layout setup forming two uniform rows on desktop layouts */
+    .clients-logos-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .client-logo-card {
+        background-color: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 6px;
+        height: 100px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .client-logo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .client-logo-card img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        filter: grayscale(0.1); /* Soft blend anchor standard */
+        transition: filter 0.2s ease;
+    }
+
+    .client-logo-card:hover img {
+        filter: grayscale(0); /* Pops true brand assets colors instantly on mouse hover */
+    }
+
+    /* Fallback layout styling rules if asset names are broken */
+    .logo-fallback-text {
+        font-size: 11px;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.5px;
+    }
+
+    /* --- Responsive System Breakpoints --- */
+    @media (max-width: 1024px) {
+        /* Scales to a balanced 4-column matrix grid layout */
+        .clients-logos-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        /* Scales down nicely to a clean 3-column matrix grid layout */
+        .clients-logos-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .client-logo-card {
+            height: 85px;
+            padding: 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* Mobile configuration optimization layers splitting cleanly down to 2 columns */
+        .clients-logos-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .clients-section-title {
+            margin-bottom: 30px;
+            font-size: 22px;
+        }
+    }
+</style>
+
+<footer class="main-site-footer">
+    <div class="footer-max-bound">
+        
+        <div class="footer-grid-layout">
+            
+            <div class="footer-brand-column">
+                <div class="brand-artwork-wrap">
+                    <svg viewBox="0 0 200 220" class="brand-crest-svg">
+                        <rect x="25" y="25" width="150" height="170" rx="12" fill="none" stroke="#111439" stroke-width="6"/>
+                        <path d="M 15 205 C 50 185, 150 185, 185 205 C 195 210, 5 210, 15 205" fill="#111439" stroke="#111439" stroke-width="4" stroke-linejoin="round"/>
+                        <circle cx="20" cy="195" r="8" fill="#111439"/>
+                        <circle cx="180" cy="195" r="8" fill="#111439"/>
+                        <polygon points="100,50 105,65 120,65 108,75 112,90 100,80 88,90 92,75 80,65 95,65" fill="none" stroke="#111439" stroke-width="3"/>
+                        <path d="M 100 95 L 100 135 M 100 110 L 85 125 M 100 110 L 115 125 M 100 135 L 88 165 M 100 135 L 112 165" stroke="#111439" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="footer-links-column large-span">
+                <h3 class="footer-column-heading">Our Products</h3>
+                <div class="split-links-wrapper">
+                    <ul class="footer-links-list">
+                        <li><a href="#">Indian Icons</a></li>
+                        <li><a href="#">3D Murals</a></li>
+                        <li><a href="#">Wall Hangings</a></li>
+                        <li><a href="#">Paintings</a></li>
+                        <li><a href="#">Sculptures</a></li>
+                        <li><a href="#">Table Sculptures</a></li>
+                    </ul>
+                    <ul class="footer-links-list">
+                        <li><a href="#">Tea Table Decors</a></li>
+                        <li><a href="#">Light Arts</a></li>
+                        <li><a href="#">Wall Mirrors</a></li>
+                        <li><a href="#">Water Falls</a></li>
+                        <li><a href="#">Exterior Pots</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-links-column">
+                <h3 class="footer-column-heading">Quick Links</h3>
+                <ul class="footer-links-list">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">DC FAQS</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Return Refund Policy</a></li>
+                    <li><a href="#">Terms and Condition</a></li>
+                    <li><a href="#">Shipping and Delivery</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-column contact-column">
+                <h3 class="footer-column-heading">Get in Touch</h3>
+                <ul class="footer-contact-matrix">
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                        </span>
+                        <span class="contact-text-node">
+                            7, Kamarajar St,<br>Parameshwaran Nagar,<br>Sholinganallur, Chennai, Tamil Nadu 600 119.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </span>
+                        <a href="mailto:support@designstarart.com" class="contact-text-node link">support@designstarart.com</a>
+                    </li>
+                    <li>
+                        <span class="contact-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </span>
+                        <a href="tel:+918870048944" class="contact-text-node link">+918870048944</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="footer-divider-line">
+
+        <div class="footer-bottom-bar">
+            <p class="copyright-disclaimer-text">© 2025 Design Star Art | All rights reserved.</p>
+            
+            <button class="scroll-top-anchor-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+        </div>
+
+    </div>
+</footer>
+
+<style>
+    .main-site-footer {
+        background-color: #65a19e; /* Exact sample palette teal shade matches uploaded graphic background tone */
+        padding: 70px 0 30px;
+        color: #ffffff;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .footer-max-bound {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .footer-grid-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 2fr 1.2fr 1.5fr; /* Optimal responsive alignment mapping rules specs */
+        gap: 40px;
+        align-items: flex-start;
+        margin-bottom: 50px;
+    }
+
+    /* Branding Crest Setup */
+    .footer-brand-column {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .brand-artwork-wrap {
+        width: 130px;
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .brand-crest-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Core Link Column Lists Typographic Scaling */
+    .footer-column-heading {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 24px;
+        letter-spacing: -0.2px;
+    }
+
+    .footer-links-column.large-span {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .split-links-wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .footer-links-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .footer-links-list a {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+        font-weight: 500;
+        transition: color 0.2s ease;
+        display: inline-block;
+    }
+
+    .footer-links-list a:hover {
+        color: #111439; /* Deep navy text hover color overlay */
+    }
+
+    /* Contact Details List Elements Layout Matrix */
+    .footer-contact-matrix {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .footer-contact-matrix li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .contact-icon-box {
+        width: 18px;
+        height: 18px;
+        color: #ffffff;
+        flex-shrink: 0;
+        margin-top: 3px;
+    }
+
+    .contact-icon-box svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .contact-text-node {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    .contact-text-node.link {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .contact-text-node.link:hover {
+        color: #111439;
+    }
+
+    /* Sub-section Dividers and Copyright Structures */
+    .footer-divider-line {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 24px;
+    }
+
+    .footer-bottom-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding-top: 6px;
+    }
+
+    .copyright-disclaimer-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
+
+    /* Scroll Top Float Anchor Handle Button Layout */
+    .scroll-top-anchor-btn {
+        position: absolute;
+        right: 0;
+        background-color: #ffffff;
+        color: #65a19e;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .scroll-top-anchor-btn:hover {
+        transform: translateY(-2px);
+        background-color: #f1f5f9;
+    }
+
+    .scroll-top-anchor-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* --- Responsive System Viewport Breakdown Adjustments --- */
+    @media (max-width: 1024px) {
+        .footer-grid-layout {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .footer-grid-layout {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .split-links-wrapper {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        .main-site-footer {
+            padding: 50px 0 20px;
+        }
+        .footer-bottom-bar {
+            flex-direction: column;
+            gap: 20px;
+        }
+        .scroll-top-anchor-btn {
+            position: relative;
+            right: auto;
+        }
+    }
+</style>
+<div class="floating-sticky-sidebar">
+    
+    <a href="https://wa.me/918870048944" target="_blank" class="sticky-action-item whatsapp-slice">
+        <span class="action-slide-label">WhatsApp</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.49-3.23a9.882 9.882 0 0 0 5.514 1.66h.005c5.441 0 9.864-4.42 9.868-9.864a9.785 9.785 0 0 0-2.88-6.953 9.78 9.78 0 0 0-6.947-2.88c-5.45 0-9.873 4.423-9.877 9.867a9.85 9.85 0 0 0 1.52 5.176l-.992 3.616 3.704-.97zM17.34 15.61c-.3-.15-1.782-.88-2.062-.982-.28-.1-.485-.15-.69.15-.204.3-.793.982-.972 1.185-.18.2-.36.225-.66.075a8.318 8.318 0 0 1-2.45-1.513 9.176 9.176 0 0 1-1.696-2.112c-.18-.3-.02-.462.13-.61.137-.135.3-.35.45-.525.15-.175.2-.3.3-.5s.05-.375-.025-.525C9.7 10.375 9.1 8.9 8.855 8.31c-.24-.58-.485-.5-.66-.51a4.98 4.98 0 0 0-.47-.01c-.165 0-.435.06-.66.31a3.06 3.06 0 0 0-1.02 2.28c0 1.43 1.04 2.81 1.185 3a22.58 22.58 0 0 0 4.65 4.11c1.23.53 2.19.43 3.01.3 1.01-.15 1.78-.73 2.03-1.38s.05-1.2.02-1.325c-.03-.12-.15-.175-.45-.325z"/>
+            </svg>
+        </div>
+    </a>
+
+    <a href="tel:+918870048944" class="sticky-action-item voice-slice">
+        <span class="action-slide-label">Call us</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                <path d="M14.05 2a9 9 0 0 1 7.95 7.95M14.05 6a5 5 0 0 1 3.95 3.95"/>
+            </svg>
+        </div>
+    </a>
+
+    <a href="https://instagram.com" target="_blank" class="sticky-action-item instagram-slice">
+        <span class="action-slide-label">Instagram</span>
+        <div class="action-icon-holder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+        </div>
+    </a>
+
+</div>
+
+<style>
+    /* --- Main Parent Container Node --- */
+    .floating-sticky-sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        z-index: 999999;
+        background: transparent;
+        gap: 3px; /* Premium crisp split gap lines */
+    }
+
+    /* --- Core Slide Component Structure --- */
+    .sticky-action-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Aligns text neatly to the left margin interior flow */
+        text-decoration: none;
+        height: 60px;
+        width: 190px; /* Fixed standard full row layout length properties */
+        position: relative;
+        cursor: pointer;
+        border-radius: 8px 0 0 8px;
+        box-shadow: -2px 3px 10px rgba(0, 0, 0, 0.15);
+        
+        /* 🛠️ FIX 1: Pushes only the dynamic label matrix safely out of the frame by default */
+        transform: translateX(130px); 
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 🛠️ FIX 2: Only the specific hovered row slides into view, the rest remain static */
+    .sticky-action-item:hover {
+        transform: translateX(0);
+    }
+
+    /* --- Icon Container: STATIONARY EDGE ANCHOR --- */
+    .action-icon-holder {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        position: absolute;
+        
+        /* 🛠️ FIX 3: Locked to the absolute left edge of the 190px tray, which correlates precisely to the screen border edge */
+        left: 0; 
+        top: 0;
+        z-index: 2;
+    }
+
+    .action-icon-holder svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* SVG vectors scaling constraints configuration rules variables */
+    .whatsapp-slice .action-icon-holder svg { fill: #ffffff; stroke: none; }
+    .voice-slice .action-icon-holder svg { fill: none; stroke: #ffffff; stroke-width: 2; }
+    .instagram-slice .action-icon-holder svg { fill: none; stroke: #ffffff; stroke-width: 2; }
+
+    /* --- Text Slide Label Configuration --- */
+    .action-slide-label {
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        
+        /* 🛠️ FIX 4: Pushes the text safely right of the 60px icon block area */
+        padding-left: 75px; 
+        
+        white-space: nowrap;
+        user-select: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Dynamic Label Text Stream visibility trigger mapping */
+    .sticky-action-item:hover .action-slide-label {
+        opacity: 1;
+        transition-delay: 0.1s;
+    }
+
+    /* --- Custom Theme Branding Color Tokens --- */
+    .whatsapp-slice { background-color: #25D366; }
+    .voice-slice { background-color: #00bcd4; }
+    .instagram-slice { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+    /* --- Responsive System Adaptive Breakpoints --- */
+    @media (max-width: 768px) {
+        .sticky-action-item {
+            height: 50px;
+            width: 160px;
+            transform: translateX(110px); /* Accurate padding metrics offsets tracking for mobile */
+        }
+        .action-icon-holder {
+            width: 50px;
+            height: 50px;
+        }
+        .action-icon-holder svg { width: 22px; height: 22px; }
+        .action-slide-label { font-size: 13px; padding-left: 62px; }
+    }
+
+    @media (max-width: 480px) {
+        .sticky-action-item {
+            height: 45px;
+            width: 140px;
+            transform: translateX(95px);
+        }
+        .action-icon-holder {
+            width: 45px;
+            height: 45px;
+        }
+        .action-icon-holder svg { width: 20px; height: 20px; }
+        .action-slide-label { font-size: 12px; padding-left: 55px; }
+    }
+</style>
+
+</body>
+</html>
